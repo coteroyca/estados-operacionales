@@ -114,25 +114,6 @@ function App() {
         <div className="grid gap-6 xl:grid-cols-3">
           {/* Columna izquierda para controles + glosario */}
           <div className="flex flex-col gap-6 xl:col-span-1">
-            {/* Panel de control simple */}
-            <div className="bg-[#121829] border border-slate-800 rounded-xl p-5 shadow-xl">
-              <h3 className="text-sm font-semibold uppercase text-slate-400 tracking-wider mb-4 flex items-center gap-2">
-                <span className="w-4 h-4 rounded-full bg-blue-500/40 border border-blue-400" />
-                Control de Simulación
-              </h3>
-              <p className="text-xs text-slate-400 mb-4">
-                Haz clic en los elementos del grafo central para interactuar y profundizar
-                en el nivel analítico de forma automática.
-              </p>
-              <div className="flex flex-col gap-2">
-                <button
-                  type="button"
-                  className="w-full bg-blue-600 hover:bg-blue-500 text-white font-medium text-sm py-2.5 px-4 rounded-lg transition duration-200 flex items-center justify-center gap-2 shadow-lg shadow-blue-900/20"
-                >
-                  Restablecer Vista General
-                </button>
-              </div>
-            </div>
 
             {/* Glosario similar al anterior, usando ticker.json */}
             {showGlossary && (
