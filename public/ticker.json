@@ -1,0 +1,132 @@
+[
+{
+  "tickerGlossary": {
+    "TICKET-PROM": {
+      "label": "TICKET-PROM",
+      "displayName": "Ticket Promedio",
+      "category": "KPIs volumétricos",
+      "status": "up",
+      "colorClass": "text-emerald-400",
+      "valueExample": "Bs 48.20",
+      "deltaExample": "3.4",
+      "definition": "Valor monetario medio de cada transacción. Se calcula como Ventas totales / Número de tickets emitidos.",
+      "howToRead": "Si el número sube respecto al histórico, cada compra deja más ingreso; si baja, estás vendiendo más barato o menos unidades por ticket.",
+      "formula": "ventas_totales / numero_tickets",
+      "timeScope": "Ventana diaria o periodo configurado por el motor.",
+      "notes": "Es clave para detectar cambios en el mix de productos y en la sensibilidad al precio."
+    },
+    "DEMANDA-ARR": {
+      "label": "DEMANDA-ARR",
+      "displayName": "Ritmo de Demanda",
+      "category": "Flujo físico",
+      "status": "up",
+      "colorClass": "text-emerald-400",
+      "valueExample": "120 uda",
+      "deltaExample": "8.1",
+      "definition": "Tasa o velocidad diaria de unidades vendidas en stock. Mide la aceleración de salida física del inventario.",
+      "howToRead": "Valores altos indican aceleración de la demanda; cambios bruscos sugieren eventos, promociones o fricciones que el grafo debe explicar.",
+      "formula": "unidades_vendidas_periodo / dias_periodo",
+      "timeScope": "Ventana diaria o intra-día según configuración del motor.",
+      "notes": "Se usa como insumo para patrones de microestructura de demanda incluidos en el grafo central."
+    },
+    "MARGEN-GEN": {
+      "label": "MARGEN-GEN",
+      "displayName": "Margen General",
+      "category": "Finanzas",
+      "status": "dn",
+      "colorClass": "text-rose-400",
+      "valueExample": "18.2 %",
+      "deltaExample": "1.5",
+      "definition": "Porcentaje de rentabilidad bruta general obtenido tras descontar el costo de venta del retail.",
+      "howToRead": "Si cae varios puntos, el motor lo marcará como alerta: estás erosionando rentabilidad aunque el volumen se mantenga.",
+      "formula": "(ventas_totales - costo_ventas) / ventas_totales",
+      "timeScope": "Periodo contable configurado (día, semana, mes).",
+      "notes": "Se vincula a eventos de 'MIGRACIÓN DE FRICCIÓN COMERCIAL' en el estado operativo."
+    },
+    "ROTACION": {
+      "label": "ROTACION",
+      "displayName": "Rotación de Inventario",
+      "category": "Inventario",
+      "status": "up",
+      "colorClass": "text-emerald-400",
+      "valueExample": "4.7x",
+      "deltaExample": "0.3",
+      "definition": "Velocidad multiplicadora con la que el inventario disponible se vende y se renueva por completo en un periodo.",
+      "howToRead": "Más rotación = menos capital inmovilizado; rotación muy baja indica sobrestock o problemas de salida física.",
+      "formula": "ventas_costo / inventario_promedio",
+      "timeScope": "Periodo de referencia del motor.",
+      "notes": "Ayuda a priorizar pasillos y categorías donde el stock se queda 'pegado'."
+    },
+    "COMP-PRECIO": {
+      "label": "COMP-PRECIO",
+      "displayName": "Competitividad de Precio",
+      "category": "Pricing",
+      "status": "dn",
+      "colorClass": "text-rose-400",
+      "valueExample": "ALERTA",
+      "deltaExample": "15",
+      "definition": "Brecha de precios frente al mercado y competidores relevantes. Alertas indican desalineaciones críticas.",
+      "howToRead": "Si aparece en modo 'ALERTA 15', implica brechas significativas; el usuario debe revisar precios contra la plaza.",
+      "formula": "precio_medio_retail - precio_medio_mercado",
+      "timeScope": "Ventana de comparación definida por el motor.",
+      "notes": "Se conecta con notas de sucursales críticas y efectos de abandono de carrito."
+    },
+    "STOP-LOSS": {
+      "label": "STOP-LOSS",
+      "displayName": "Límite de Pérdida",
+      "category": "Gestión de riesgo",
+      "status": "up",
+      "colorClass": "text-emerald-400",
+      "valueExample": "ACTIVADO",
+      "deltaExample": "LCTEOS",
+      "definition": "Regla automática de protección activa para forzar la salida física por vencimiento o merma de un pasillo.",
+      "howToRead": "Si está 'ACTIVADO' sobre una categoría, el sistema está ejecutando protección y requiere seguimiento operativo.",
+      "formula": "reglas_motor_stop_loss_sobre_inventario",
+      "timeScope": "Estado actual de las reglas dinámicas.",
+      "notes": "Se refleja también en sucursales críticas dentro del drill-down."
+    },
+    "QUINCENA": {
+      "label": "QUINCENA",
+      "displayName": "Fase Bull-Market",
+      "category": "Liquidez clientes",
+      "status": "up",
+      "colorClass": "text-emerald-400",
+      "valueExample": "BULL-MARKET",
+      "deltaExample": "",
+      "definition": "Inyección temporal de liquidez por cobros. Clientes muestran alta disposición de compra y baja sensibilidad al precio.",
+      "howToRead": "Cuando está en modo Bull, puedes empujar estrategias ofensivas: upselling, bundles y pruebas de precio.",
+      "formula": "estado_ciclo_pago_clientes",
+      "timeScope": "Ventana alrededor de fechas de cobro (quincenas, cierres).",
+      "notes": "El grafo lo usa para explicar volatilidad alta en Fruver y Lácteos en fines de semana."
+    },
+    "POST-QUINCE": {
+      "label": "POST-QUINCE",
+      "displayName": "Fase Bear",
+      "category": "Liquidez clientes",
+      "status": "dn",
+      "colorClass": "text-rose-400",
+      "valueExample": "BEAR",
+      "deltaExample": "22",
+      "definition": "Periodo de contracción natural del consumo entre ciclos de pago que requiere mitigación de fricción comercial.",
+      "howToRead": "Si el estado Bear es profundo, conviene activar tácticas defensivas: promociones de baja intensidad y gestión de stock.",
+      "formula": "estado_ciclo_post_pago_clientes",
+      "timeScope": "Ventana posterior a la quincena o fecha de cobro.",
+      "notes": "Se relaciona con caídas en ritmo de demanda y migración de fricción comercial."
+    },
+    "RETAILDING": {
+      "label": "RETAILDING",
+      "displayName": "Formación Académica",
+      "category": "Capacitación",
+      "status": "up",
+      "colorClass": "text-emerald-400",
+      "valueExample": "TALLER",
+      "deltaExample": "12 CUPOS",
+      "definition": "Estado de disponibilidad para talleres del framework cuantitativo híbrido de la plataforma.",
+      "howToRead": "Cuando muestra 'TALLER' con cupos, hay sesiones activas para entrenar equipos en el uso de RetailMind.",
+      "formula": "agenda_formacion_plataforma",
+      "timeScope": "Calendario de formación vigente.",
+      "notes": "No afecta directamente KPIs operacionales, pero incrementa la capacidad de interpretación de los estados."
+    }
+  }
+}
+]
