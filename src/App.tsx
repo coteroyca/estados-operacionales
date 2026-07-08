@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { TickerMarquesina } from './components/TickerMarquesina'
 
 type EstadoOperacional = {
@@ -42,7 +42,47 @@ function badgeColor(nivel: EstadoOperacional['nivel']) {
   }
 }
 
+// Tipos para el glosario
+type TickerGlossaryEntry = {
+  label: string
+  displayName: string
+  category: string
+  status: 'up' | 'dn'
+  colorClass: string
+  valueExample: string
+  deltaExample: string
+  definition: string
+  howToRead: string
+  formula: string
+  timeScope: string
+  notes: string
+}
+
+type TickerJsonRoot = {
+  tickerGlossary: Record<string, TickerGlossaryEntry>
+}
+
 function App() {
+  const [showGlossary, setShowGlossary] = useState(false)
+  const [glossary, setGlossary] = useState<Record<string, TickerGlossaryEntry>>({})
+
+  useEffect(() => {
+    async function loadGlossary() {
+      try {
+        const res = await fetch('/ticker.json')
+        if (!res.ok) return
+        const raw = (await res.json()) as TickerJsonRoot[]
+        const root = raw[0]
+        setGlossary(root?.tickerGlossary ?? {})
+      } catch (e) {
+        console.error(e)
+      }
+    }
+    loadGlossary()
+  }, [])
+
+  const glossaryEntries = Object.values(glossary)
+
   return (
     <main className="min-h-screen bg-slate-950 text-slate-100">
       {/* Marquesina superior alimentada por ticker.json */}
@@ -58,11 +98,63 @@ function App() {
               POC en Vite + React para Retailding
             </p>
           </div>
-          <span className="text-xs rounded-full border border-slate-700 px-3 py-1 text-slate-300">
-            Demo en Vercel
-          </span>
+
+          {/* Botón para mostrar/ocultar glosario */}
+          <button
+            type="button"
+            onClick={() => setShowGlossary((prev) => !prev)}
+            className="text-xs rounded-full border border-slate-700 px-3 py-1 text-slate-300 hover:bg-slate-800 transition-colors"
+          >
+            {showGlossary ? 'Ocultar glosario' : 'Ver glosario del ticker'}
+          </button>
         </div>
       </header>
+
+      {/* Panel de glosario expandible */}
+      {showGlossary && (
+        <section className="mx-auto max-w-6xl px-4 pt-4">
+          <div className="rounded-xl border border-slate-800 bg-slate-900/80 p-4 text-xs text-slate-300 space-y-3">
+            <h2 className="text-sm font-semibold mb-2">
+              Glosario de estados del ticker
+            </h2>
+            {glossaryEntries.map((entry) => (
+              <article
+                key={entry.label}
+                className="border-b border-slate-800 pb-3 last:border-b-0"
+              >
+                <div className="flex items-center justify-between mb-1">
+                  <div>
+                    <span className="text-[11px] font-mono text-slate-500 mr-2">
+                      {entry.label}
+                    </span>
+                    <span className="text-xs font-semibold">
+                      {entry.displayName}
+                    </span>
+                  </div>
+                  <span className="text-[10px] rounded-full bg-slate-800 px-2 py-0.5 text-slate-400">
+                    {entry.category}
+                  </span>
+                </div>
+                <p className="text-[11px] text-slate-400 mb-1">
+                  <span className="font-semibold">Definición:</span> {entry.definition}
+                </p>
+                <p className="text-[11px] text-slate-400 mb-1">
+                  <span className="font-semibold">Cómo leerlo:</span> {entry.howToRead}
+                </p>
+                <p className="text-[11px] text-slate-500">
+                  <span className="font-semibold">Ejemplo de valor:</span>{' '}
+                  {entry.valueExample}
+                  {entry.deltaExample && (
+                    <span className="ml-1">
+                      ({entry.deltaExample})
+                    </span>
+                  )}
+                </p>
+              </article>
+            ))}
+          </div>
+        </section>
+      )}
 
       <section className="mx-auto max-w-6xl px-4 py-8 space-y-6">
         <div className="grid gap-6 md:grid-cols-3">
@@ -94,7 +186,7 @@ function App() {
           </p>
           <p>
             Desde aquí podemos leer archivos JSON en{' '}
-            <span className="font-semibold">public/</span>, integrar Power BI embebido
+            <span className="font-semibold">public</span>, integrar Power BI embebido
             o consumir datos desde tu motor de KPIs.
           </p>
         </div>
