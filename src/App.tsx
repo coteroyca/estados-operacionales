@@ -110,13 +110,11 @@ function App() {
       </header>
 
       <section className="mx-auto max-w-6xl px-4 py-8 space-y-6">
-        {/* Layout responsive: en móvil stack, en xl columnas */}
-        <div className="grid gap-6 xl:grid-cols-3">
-          {/* Columna izquierda para controles + glosario */}
-          <div className="flex flex-col gap-6 xl:col-span-1">
-
-            {/* Glosario similar al anterior, usando ticker.json */}
-            {showGlossary && (
+        {/* Layout responsive: en móvil stack, en xl columnas solo si hay glosario */}
+        <div className={showGlossary ? 'grid gap-6 xl:grid-cols-3' : 'grid gap-6'}>
+          {/* Columna izquierda: solo se muestra si hay glosario */}
+          {showGlossary && (
+            <div className="flex flex-col gap-6 xl:col-span-1">
               <div className="bg-[#141f30] border border-slate-800 rounded-xl p-5 shadow-xl flex flex-col max-h-[420px]">
                 <h3 className="text-sm font-semibold uppercase text-slate-400 tracking-wider mb-3 flex items-center gap-2 shrink-0">
                   <span className="w-4 h-4 rounded-full bg-emerald-500/40 border border-emerald-400" />
@@ -151,11 +149,11 @@ function App() {
                   ))}
                 </div>
               </div>
-            )}
-          </div>
+            </div>
+          )}
 
-          {/* Columna derecha: tablero de estados operacionales */}
-          <div className="xl:col-span-2 space-y-6">
+          {/* Columna del tablero: ocupa 2/3 si hay glosario, 100% si no */}
+          <div className={showGlossary ? 'xl:col-span-2 space-y-6' : 'space-y-6'}>
             <div className="grid gap-6 md:grid-cols-3">
               {estadosDemo.map((estado) => (
                 <article
@@ -192,8 +190,7 @@ function App() {
             </div>
           </div>
         </div>
-      </section>
-    </main>
+      </section>   </main>
   )
 }
 
