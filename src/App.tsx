@@ -42,7 +42,6 @@ function badgeColor(nivel: EstadoOperacional['nivel']) {
   }
 }
 
-// Tipos para el glosario
 type TickerGlossaryEntry = {
   label: string
   displayName: string
@@ -110,85 +109,107 @@ function App() {
         </div>
       </header>
 
-      {/* Panel de glosario expandible */}
-      {showGlossary && (
-        <section className="mx-auto max-w-6xl px-4 pt-4">
-          <div className="rounded-xl border border-slate-800 bg-slate-900/80 p-4 text-xs text-slate-300 space-y-3">
-            <h2 className="text-sm font-semibold mb-2">
-              Glosario de estados del ticker
-            </h2>
-            {glossaryEntries.map((entry) => (
-              <article
-                key={entry.label}
-                className="border-b border-slate-800 pb-3 last:border-b-0"
-              >
-                <div className="flex items-center justify-between mb-1">
-                  <div>
-                    <span className="text-[11px] font-mono text-slate-500 mr-2">
-                      {entry.label}
-                    </span>
-                    <span className="text-xs font-semibold">
-                      {entry.displayName}
+      <section className="mx-auto max-w-6xl px-4 py-8 space-y-6">
+        {/* Layout responsive: en móvil stack, en xl columnas */}
+        <div className="grid gap-6 xl:grid-cols-3">
+          {/* Columna izquierda para controles + glosario */}
+          <div className="flex flex-col gap-6 xl:col-span-1">
+            {/* Panel de control simple */}
+            <div className="bg-[#121829] border border-slate-800 rounded-xl p-5 shadow-xl">
+              <h3 className="text-sm font-semibold uppercase text-slate-400 tracking-wider mb-4 flex items-center gap-2">
+                <span className="w-4 h-4 rounded-full bg-blue-500/40 border border-blue-400" />
+                Control de Simulación
+              </h3>
+              <p className="text-xs text-slate-400 mb-4">
+                Haz clic en los elementos del grafo central para interactuar y profundizar
+                en el nivel analítico de forma automática.
+              </p>
+              <div className="flex flex-col gap-2">
+                <button
+                  type="button"
+                  className="w-full bg-blue-600 hover:bg-blue-500 text-white font-medium text-sm py-2.5 px-4 rounded-lg transition duration-200 flex items-center justify-center gap-2 shadow-lg shadow-blue-900/20"
+                >
+                  Restablecer Vista General
+                </button>
+              </div>
+            </div>
+
+            {/* Glosario similar al anterior, usando ticker.json */}
+            {showGlossary && (
+              <div className="bg-[#141f30] border border-slate-800 rounded-xl p-5 shadow-xl flex flex-col max-h-[420px]">
+                <h3 className="text-sm font-semibold uppercase text-slate-400 tracking-wider mb-3 flex items-center gap-2 shrink-0">
+                  <span className="w-4 h-4 rounded-full bg-emerald-500/40 border border-emerald-400" />
+                  Glosario de Indicadores (Ticker)
+                </h3>
+                <div className="overflow-y-auto pr-1 space-y-4 text-xs">
+                  {glossaryEntries.map((entry, index) => (
+                    <div
+                      key={entry.label}
+                      className={index === 0 ? '' : 'border-t border-slate-800/60 pt-2'}
+                    >
+                      <div className="flex justify-between items-baseline">
+                        <span className="font-mono font-bold text-[#c8d8e8]">
+                          {entry.label}
+                        </span>
+                        <span className={`font-mono font-bold ${entry.colorClass}`}>
+                          {entry.valueExample}{' '}
+                          {entry.deltaExample && (
+                            <span className="text-[10px] font-normal ml-1 text-slate-300">
+                              {entry.status === 'up' ? '▲' : '▼'} {entry.deltaExample}
+                            </span>
+                          )}
+                        </span>
+                      </div>
+                      <p className="text-[10px] font-normal text-slate-500 mt-0.5">
+                        {entry.displayName}
+                      </p>
+                      <p className="text-slate-300 mt-1 leading-relaxed text-[11px]">
+                        {entry.definition}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Columna derecha: tablero de estados operacionales */}
+          <div className="xl:col-span-2 space-y-6">
+            <div className="grid gap-6 md:grid-cols-3">
+              {estadosDemo.map((estado) => (
+                <article
+                  key={estado.id}
+                  className="rounded-xl border border-slate-800 bg-slate-900/70 p-4 shadow-sm hover:border-slate-700 hover:bg-slate-900 transition-colors"
+                >
+                  <div className="flex items-center justify-between mb-3">
+                    <h2 className="text-sm font-semibold">{estado.nombre}</h2>
+                    <span
+                      className={
+                        'text-[10px] uppercase tracking-wide px-2 py-1 rounded-full ' +
+                        badgeColor(estado.nivel)
+                      }
+                    >
+                      {estado.nivel}
                     </span>
                   </div>
-                  <span className="text-[10px] rounded-full bg-slate-800 px-2 py-0.5 text-slate-400">
-                    {entry.category}
-                  </span>
-                </div>
-                <p className="text-[11px] text-slate-400 mb-1">
-                  <span className="font-semibold">Definición:</span> {entry.definition}
-                </p>
-                <p className="text-[11px] text-slate-400 mb-1">
-                  <span className="font-semibold">Cómo leerlo:</span> {entry.howToRead}
-                </p>
-                <p className="text-[11px] text-slate-500">
-                  <span className="font-semibold">Ejemplo de valor:</span>{' '}
-                  {entry.valueExample}
-                  {entry.deltaExample && (
-                    <span className="ml-1">
-                      ({entry.deltaExample})
-                    </span>
-                  )}
-                </p>
-              </article>
-            ))}
+                  <p className="text-xs text-slate-400">{estado.descripcion}</p>
+                </article>
+              ))}
+            </div>
+
+            <div className="rounded-xl border border-dashed border-slate-700 bg-slate-900/50 p-4 text-xs text-slate-400">
+              <p className="mb-1">
+                Próximo paso: reemplazar{' '}
+                <span className="font-semibold">estadosDemo</span> por datos reales
+                (JSON, API o Supabase).
+              </p>
+              <p>
+                Desde aquí podemos leer archivos JSON en{' '}
+                <span className="font-semibold">public</span>, integrar Power BI
+                embebido o consumir datos desde tu motor de KPIs.
+              </p>
+            </div>
           </div>
-        </section>
-      )}
-
-      <section className="mx-auto max-w-6xl px-4 py-8 space-y-6">
-        <div className="grid gap-6 md:grid-cols-3">
-          {estadosDemo.map((estado) => (
-            <article
-              key={estado.id}
-              className="rounded-xl border border-slate-800 bg-slate-900/70 p-4 shadow-sm hover:border-slate-700 hover:bg-slate-900 transition-colors"
-            >
-              <div className="flex items-center justify-between mb-3">
-                <h2 className="text-sm font-semibold">{estado.nombre}</h2>
-                <span
-                  className={
-                    'text-[10px] uppercase tracking-wide px-2 py-1 rounded-full ' +
-                    badgeColor(estado.nivel)
-                  }
-                >
-                  {estado.nivel}
-                </span>
-              </div>
-              <p className="text-xs text-slate-400">{estado.descripcion}</p>
-            </article>
-          ))}
-        </div>
-
-        <div className="rounded-xl border border-dashed border-slate-700 bg-slate-900/50 p-4 text-xs text-slate-400">
-          <p className="mb-1">
-            Próximo paso: reemplazar <span className="font-semibold">estadosDemo</span>{' '}
-            por datos reales (JSON, API o Supabase).
-          </p>
-          <p>
-            Desde aquí podemos leer archivos JSON en{' '}
-            <span className="font-semibold">public</span>, integrar Power BI embebido
-            o consumir datos desde tu motor de KPIs.
-          </p>
         </div>
       </section>
     </main>
